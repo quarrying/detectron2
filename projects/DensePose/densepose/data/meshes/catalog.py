@@ -14,6 +14,7 @@ class MeshInfo:
     data: str
     geodists: Optional[str] = None
     symmetry: Optional[str] = None
+    texcoords: Optional[str] = None
 
 
 class _MeshCatalog(UserDict):
@@ -49,19 +50,19 @@ MeshCatalog = _MeshCatalog()
 
 
 def register_mesh(mesh_info: MeshInfo, base_path: Optional[str]):
+    geodists, symmetry, texcoords = mesh_info.geodists, mesh_info.symmetry, mesh_info.texcoords
+    if geodists:
+        geodists = maybe_prepend_base_path(base_path, geodists)
+    if symmetry:
+        symmetry = maybe_prepend_base_path(base_path, symmetry)
+    if texcoords:
+        texcoords = maybe_prepend_base_path(base_path, texcoords)
     MeshCatalog[mesh_info.name] = MeshInfo(
         name=mesh_info.name,
         data=maybe_prepend_base_path(base_path, mesh_info.data),
-        geodists=(
-            maybe_prepend_base_path(base_path, mesh_info.geodists)
-            if mesh_info.geodists is not None
-            else None
-        ),
-        symmetry=(
-            maybe_prepend_base_path(base_path, mesh_info.symmetry)
-            if mesh_info.symmetry is not None
-            else None
-        ),
+        geodists=geodists,
+        symmetry=symmetry,
+        texcoords=texcoords,
     )
 
 
